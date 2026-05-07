@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail Projet</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="station.css">
+</head>
+<body>
+
+    <div id="reading-progress"></div>
+    <div id="header-container"></div>
+
+    <main class="container">
+        <div class="nav-back">
+            <a href="../projects/projects.html" class="btn-retour">
+                <i class="fas fa-arrow-left"></i>
+                <span>Retour aux projets</span>
+            </a>
+        </div>
+
+        <section class="project-header">
+            <h1 id="view-title">Chargement...</h1>
+            <div class="badges" id="view-badges"></div>
+
+            <div id="project-cover-container" style="display: none;">
+                <img id="view-cover-img" src="" alt="Couverture du projet" class="zoomable">
+            </div>
+
+            <div class="summary" id="view-summary"></div>
+        </section>
+
+        <div id="view-steps-container"></div>
+
+        <section class="tech-card" id="view-tech-section" style="display: none; margin-top: 30px;">
+            <h2 id="view-tech-title"><i class="fas fa-calculator"></i> Analyse Technique</h2>
+            <div class="formula" id="view-tech-formula"></div>
+            <p id="view-tech-result"></p>
+        </section>
+
+        <section class="view-section" id="view-code-section" style="display: none; margin-top: 30px;">
+            <h2><i class="fas fa-code"></i> Code Source</h2>
+            <div id="view-code-source"></div>
+        </section>
+    </main>
+
+    <div id="lightbox" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(15,23,42,0.95); justify-content:center; align-items:center; cursor:pointer; backdrop-filter: blur(5px);">
+        <span style="position:absolute; top:20px; right:30px; color:white; font-size:40px; line-height:1;">&times;</span>
+        <img id="lightbox-img" style="max-width:90%; max-height:85%; border-radius:8px;">
+    </div>
+
+    <script src="../../assets/js/main.JS"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    
+    <script src="display_details.js"></script>
+
+</body>
+</html>

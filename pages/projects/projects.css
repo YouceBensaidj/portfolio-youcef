@@ -1,0 +1,122 @@
+:root {
+    --primary-blue: #00bcd4;
+    --text-dark: #333;
+    --bg-white: #ffffff;
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.projects-section {
+    background-color: var(--bg-white);
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.section-title {
+    color: var(--primary-blue);
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.projects-grid {
+    display: grid;
+    /* On garde ta grille intelligente */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 350px)); 
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center; /* Centre les cartes si elles ne sont pas assez nombreuses */
+}
+
+.project-card {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Pour que toutes les cartes aient la même hauteur */
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- LE CADRE DE L'IMAGE --- */
+.project-image {
+    width: 100%;
+    height: 200px; /* Hauteur fixe pour éviter l'effet étiré */
+    overflow: hidden;
+    background-color: #f0f0f0;
+}
+
+.project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Remplit le cadre sans déformer le contenu */
+    object-position: center;
+    transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-image img {
+    transform: scale(1.1);
+}
+
+/* --- LE CONTENU TEXTUEL --- */
+.project-content {
+    padding: 20px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Pousse le bouton vers le bas si le texte est court */
+}
+
+.project-content h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    text-transform: uppercase;
+}
+
+.project-content p {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.skills-tags {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.tag {
+    background: #f0f7f9;
+    color: var(--primary-blue);
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border: 1px solid var(--primary-blue);
+}
+
+.btn-view {
+    margin-top: auto; /* Aligne le bouton en bas de la carte */
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-view:hover {
+    background-color: #008ba3;
+}

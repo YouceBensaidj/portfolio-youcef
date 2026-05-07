@@ -1,0 +1,238 @@
+/* ============================================================
+   1. BASE ET RÉINITIALISATION
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    overflow-x: hidden; /* Empêche le défilement horizontal dû au menu caché */
+}
+
+/* ============================================================
+   2. NAVIGATION (NAVBAR) - STYLE MOBILE PAR DÉFAUT
+   ============================================================ */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: #111;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.prenom { color: #00bcd4; }
+.nom { color: #ff3b3b; }
+
+/* Menu Mobile (caché par défaut sur le côté) */
+.nav-links {
+    position: absolute;
+    top: 100%;
+    left: -100%; 
+    flex-direction: column;
+    background-color: #111;
+    width: 100%;
+    transition: 0.4s ease;
+    list-style: none;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.nav-links.active {
+    left: 0; /* Apparaît au clic */
+}
+
+.nav-links li {
+    margin: 15px 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    transition: 0.3s;
+    position: relative;
+}
+
+.nav-links li a:hover { color: #00bcd4; }
+
+/* Soulignement animé pour les liens */
+.nav-links li a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0%;
+    height: 2px;
+    background-color: #00bcd4;
+    transition: 0.3s;
+}
+.nav-links li a:hover::after { width: 100%; }
+
+/* Icône Hamburger (Visible uniquement sur mobile) */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: 0.3s;
+}
+
+/* Animation en Croix du bouton */
+.hamburger.toggle span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
+.hamburger.toggle span:nth-child(2) { opacity: 0; }
+.hamburger.toggle span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+
+/* ============================================================
+   3. SECTION HERO (PROFIL)
+   ============================================================ */
+.hero {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px; /* Espace pour éviter que la photo colle au menu */
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    max-width: 1100px;
+    width: 100%;
+}
+
+.photo img {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 4px solid #00bcd4;
+    object-fit: cover;
+    transition: 0.3s ease;
+}
+
+.photo img:hover { transform: scale(1.05); }
+
+.text { text-align: center; }
+.text h1 { font-size: 1.8rem; line-height: 1.2; color: #111; }
+.text .metier { font-size: 20px; font-weight: bold; margin-top: 10px; color: #111; }
+.description { font-size: 1rem; color: #666; line-height: 1.6; margin-top: 20px; max-width: 600px; }
+
+/* ============================================================
+   4. SPÉCIALISATIONS
+   ============================================================ */
+.specialisations {
+    padding: 60px 5%;
+    background-color: #f9f9f9;
+}
+
+.grid-specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.spec-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 250px;
+    flex: 1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================================
+   5. FOOTER
+   ============================================================ */
+footer {
+    background-color: #111;
+    color: white;
+    padding: 40px 5%;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.socials { display: flex; gap: 20px; }
+.socials a { color: #00bcd4; text-decoration: none; font-weight: bold; transition: 0.3s; }
+.socials a:hover { color: #ff3b3b; text-decoration: underline; }
+
+/* ============================================================
+   6. MEDIA QUERIES (BUREAU > 768px)
+   ============================================================ */
+@media (min-width: 768px) {
+    
+    /* --- RÉTABLIR LE MENU NORMAL --- */
+    .hamburger {
+        display: none; /* CACHE LE BOUTON HAMBURGER SUR PC */
+    }
+
+    .nav-links {
+        position: static; /* Annule le menu latéral mobile */
+        display: flex;
+        flex-direction: row; /* Aligne les liens horizontalement */
+        width: auto;
+        background-color: transparent;
+        padding: 0;
+        left: 0;
+        gap: 25px;
+    }
+
+    .nav-links li {
+        margin: 0; /* Enlève les marges verticales du mobile */
+    }
+
+    /* --- AJUSTEMENT HERO BUREAU --- */
+    .hero {
+        align-items: flex-start;
+        padding-top: 100px; /* Grand espace sous le menu pour "respirer" */
+    }
+
+    .hero-content {
+        flex-direction: row; /* Photo à gauche, Texte à droite */
+        text-align: left;
+        gap: 60px;
+    }
+
+    .text { text-align: left; }
+    .text h1 { font-size: 2.8rem; }
+    .photo img { width: 300px; height: 300px; }
+
+    /* --- FOOTER BUREAU --- */
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+}

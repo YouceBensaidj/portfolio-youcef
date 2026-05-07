@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Gestion des Projets - Youcef BENSAIDJ</title>
+    <link rel="stylesheet" href="admin.css"> 
+    <link rel="stylesheet" href="navigate/navigate.css">
+</head>
+<body>
+   
+    <header></header> 
+
+    <main class="admin-container">
+        <h1 class="admin-title">Espace Administration (Youcef)</h1>
+
+        <section class="admin-section">
+            <h2>Ajouter un Nouveau Projet</h2>
+            <form id="add-project-form" class="admin-form">
+                <div class="form-group">
+                    <label for="project-title">Titre du Projet :</label>
+                    <input type="text" id="project-title" name="title" placeholder="Ex: Robot Autonome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-desc">Description Courte :</label>
+                    <textarea id="project-desc" name="description" placeholder="Ex: Robot compact avec évitement d'obstacles..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-skills">Compétences (séparées par des virgules) :</label>
+                    <input type="text" id="project-skills" name="skills" placeholder="Ex: C++, Arduino, Lidar" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-image">Image du Projet :</label>
+                    <input type="file" id="project-image" name="image" accept="image/*">
+                    <p class="help-text">L'image sera stockée localement dans le dossier /images</p>
+                </div>
+                <button type="submit" class="btn-admin">AJOUTER LE PROJET</button>
+            </form>
+        </section>
+
+    <script src="admin.js"></script>
+    <script src="navigate/navigate.js"></script>
+</body>
+</html>

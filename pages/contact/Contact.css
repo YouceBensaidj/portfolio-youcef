@@ -1,0 +1,181 @@
+/* contact.css */
+
+:root {
+    --primary-blue: #00bcd4; /* Ton bleu cyan caractéristique */
+    --text-dark: #333;
+    --bg-light: #f9f9f9;
+    --white: #ffffff;
+}
+
+.contact-container {
+    max-width: 1100px;
+    margin: 80px auto;
+    padding: 0 20px;
+}
+
+.contact-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.contact-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.section-title {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+/* Ligne sous le titre */
+.section-title::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 4px;
+    background: var(--primary-blue);
+    margin: 10px auto;
+    border-radius: 2px;
+}
+
+.contact-wrapper {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap; /* S'adapte au mobile */
+}
+
+/* Colonne de gauche */
+.contact-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.info-card {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border-top: 5px solid var(--primary-blue);
+}
+
+.info-card h3 {
+    margin-bottom: 25px;
+    font-size: 1.4rem;
+    color: var(--text-dark);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.info-item .icon {
+    font-size: 1.5rem;
+    background: #e0f7fa;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.info-item label {
+    display: block;
+    font-size: 0.8rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.info-item a, .info-item span {
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Colonne de droite (Formulaire) */
+.contact-form-section {
+    flex: 2;
+    min-width: 300px;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--white);
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+.form-group textarea {
+    height: 180px;
+    resize: none;
+}
+
+.btn-submit {
+    background: var(--primary-blue);
+    color: var(--white);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+}
+
+.btn-submit:hover {
+    background: #008ba3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.3);
+}
+
+/* Responsive pour les petits écrans */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .btn-submit {
+        width: 100%;
+    }
+}
+
+/*paramètre des icone  */
+/*linkedin  */
+.icon img {
+    width: 24px;   /* Ajuste la taille selon tes besoins */
+    height: 24px;
+    display: block;
+    object-fit: contain;
+}

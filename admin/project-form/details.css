@@ -1,0 +1,275 @@
+/* 1. RÉUTILISATION DES VARIABLES */
+:root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --success: #4cc9f0;
+    --danger: #f72585;
+    --dark: #212529;
+    --light: #f8f9fa;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --code-bg: #1a1a2e; /* Nouveau: fond pour les blocs de code */
+}
+
+body {
+    background-color: #f0f2f5;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+.admin-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.admin-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(to right, var(--primary), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* Sections Style "Card" */
+.admin-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    border: none;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.admin-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    color: var(--primary);
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--light);
+    padding-bottom: 15px;
+}
+
+/* --- AJOUT : STYLE POUR L'AIDE AU FORMATAGE --- */
+.help-text {
+    display: block;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 8px;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid var(--primary);
+}
+
+.help-text b {
+    color: var(--primary);
+    font-family: monospace;
+    background: rgba(67, 97, 238, 0.1);
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+/* Formulaire Stylisé */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.admin-form input, 
+.admin-form textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
+    background: #fcfdfe;
+    transition: var(--transition);
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* --- MISE À JOUR : GESTION DES ESPACES DANS TEXTAREA --- */
+.admin-form textarea {
+    min-height: 160px;
+    white-space: pre-wrap; /* Respecte les retours à la ligne à l'écran */
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.admin-form input:focus, 
+.admin-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+}
+
+/* Section Code Source Spécifique (Éditeur sombre) */
+.code-content {
+    background: var(--code-bg) !important;
+    color: #a9b7c6 !important;
+    font-family: 'Fira Code', 'Consolas', monospace !important;
+    border: 2px solid #2d3748 !important;
+    padding: 20px !important;
+    tab-size: 4;
+}
+
+/* Boutons Dynamiques */
+.btn-admin {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Bouton Ajouter Étape */
+#add-step-btn {
+    background: rgba(76, 201, 240, 0.1);
+    color: var(--secondary);
+    border: 2px dashed var(--success);
+    width: 100%;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#add-step-btn:hover {
+    background: var(--success);
+    color: var(--white);
+    border-style: solid;
+}
+
+/* Bouton Ajouter Code */
+#add-code-btn {
+    background: #1a1a1a;
+    color: #4cc9f0;
+    border: 2px solid #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#add-code-btn:hover {
+    background: #252525;
+    border-color: #4cc9f0;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 201, 240, 0.3);
+}
+
+/* Footer d'actions sticky */
+.actions-footer {
+    background: var(--white);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    position: sticky;
+    bottom: 20px;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/*--------------------PHOTO DE COVERTURE  -----------------*/
+
+/* Style de la zone de téléchargement de couverture */
+.cover-drop-zone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cover-drop-zone:hover {
+    border-color: var(--primary);
+    background: rgba(37, 99, 235, 0.02);
+}
+
+.cover-drop-zone i {
+    font-size: 3rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+#cover-preview-img {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.btn-remove-cover {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    z-index: 10;
+}
+
+
+
+
+
+
+
+/* --- ANIMATIONS --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dynamic-step, .dynamic-code-block {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .actions-footer {
+        flex-direction: column;
+        bottom: 10px;
+    }
+    .btn-admin { width: 100%; justify-content: center; }
+}

@@ -1,0 +1,119 @@
+/* Barre principale */
+.admin-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a; /* Noir pro */
+    padding: 0.8rem 2rem;
+    color: white;
+    border-bottom: 2px solid #3498db;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Logo et Statut */
+.admin-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-dot {
+    height: 10px;
+    width: 10px;
+    background-color: #2ecc71; /* Vert connecté */
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.admin-logo p {
+    font-weight: bold;
+    margin: 0;
+}
+
+.admin-logo span {
+    color: #3498db;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+/* Menu de navigation */
+.admin-menu {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+    margin: 0;
+}
+
+.admin-menu a {
+    color: #bdc3c7;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.admin-menu a:hover, .admin-menu a.active {
+    color: white;
+}
+
+/* Bouton Quitter */
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+
+
+/* drop down */
+
+/* Style de base du menu */
+.admin-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Positionnement du dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none; /* Caché par défaut */
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+/* Style des liens dans le menu déroulant */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block; /* Un lien par ligne */
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Affichage au survol */
+.dropdown:hover .dropdown-content {
+    display: block;
+}

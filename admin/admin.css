@@ -1,0 +1,154 @@
+/* 1. VARIABLES GLOBALES */
+:root {
+    --primary-blue: #00bcd4;  /* Bleu ciel (accents et ajout) */
+    --primary-green: #4CAF50; /* Vert (modifier) */
+    --primary-red: #ff3b3b;   /* Rouge (supprimer) */
+    --text-dark: #333;
+    --bg-white: #ffffff;
+    --border-color: #ddd;
+    --bg-light: #f9f9f9;
+    --primary-gray: #607d8b; /* Une couleur gris-bleu pro par exemple */
+}
+
+/* 2. MISE EN PAGE GÉNÉRALE */
+.admin-container {
+    background-color: var(--bg-white);
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.admin-title {
+    color: var(--primary-blue);
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-section {
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+/* 3. STYLE DU FORMULAIRE D'AJOUT */
+.admin-form .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.admin-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.admin-form input,
+.admin-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box; /* Assure que le padding ne dépasse pas */
+}
+
+.admin-form textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.help-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.btn-admin {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-admin:hover {
+    background-color: #008ba3;
+}
+
+/* 4. LISTE DES PROJETS EXISTANTS */
+.admin-list-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between; /* Infos à gauche, actions à droite */
+    align-items: center;
+    transition: box-shadow 0.3s;
+}
+
+.admin-list-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.admin-list-item h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.admin-list-item p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* 5. BOUTONS D'ACTION (MODIFIER / SUPPRIMER) */
+/* Conteneur pour empiler les boutons à droite */
+/* Le conteneur qui contient les deux boutons */
+.admin-actions {
+    display: flex;
+    flex-direction: column; /* C'est cette ligne qui force l'empilement vertical */
+    gap: 10px;               /* L'espacement entre le bouton vert et le bouton rouge */
+    justify-content: center; /* Centre les boutons verticalement par rapport au texte */
+}
+
+/* On s'assure que les boutons ont la même largeur et ne sont pas trop géants */
+.btn-edit, .btn-delete .btn-details {
+    width: 120px;            /* Tu peux ajuster cette largeur selon tes goûts */
+    padding: 8px 0;          /* Espace interne pour que le bouton soit beau */
+    text-align: center;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: var(--primary-green);
+}
+
+.btn-delete {
+    background-color: var(--primary-red);
+}
+
+.btn-details{ 
+     background-color: var(--primary-blue);
+}
+
+.btn-edit:hover, .btn-delete:hover , .btn-details:hover {
+    opacity: 0.85;
+}
+
+.btn-edit:active, .btn-delete:active , .btn-details:active {
+    transform: scale(0.95); /* Petit effet d'enfoncement au clic */
+}
