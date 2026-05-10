@@ -18,7 +18,6 @@ const quillSummary = new Quill('#editor-summary', {
     theme: 'snow'
 });
 
-// Stockage des instances Quill pour les étapes
 const quillStepsEditors = {};
 let stepCount = 0;
 let codeCount = 0;
@@ -34,25 +33,19 @@ const removeBtn = document.getElementById('remove-cover-btn');
 const hiddenCoverInput = document.getElementById('project-cover-base64');
 
 if (dropZone) {
-    // Ouvrir l'explorateur au clic sur la zone
     dropZone.addEventListener('click', () => fileInput.click());
-
     fileInput.addEventListener('change', function() {
         if (this.files && this.files[0]) handleCoverFile(this.files[0]);
     });
-
-    // Drag & Drop
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropZone.style.borderColor = "#2563eb";
         dropZone.style.background = "rgba(37, 99, 235, 0.05)";
     });
-
     dropZone.addEventListener('dragleave', () => {
         dropZone.style.borderColor = "#cbd5e1";
         dropZone.style.background = "#f8fafc";
     });
-
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropZone.style.borderColor = "#cbd5e1";
@@ -69,6 +62,7 @@ async function handleCoverFile(file) {
 }
 
 function displayCoverPreview(base64) {
+    if(!previewImg) return;
     previewImg.src = base64;
     previewImg.style.display = 'block';
     placeholder.style.display = 'none';
@@ -78,7 +72,7 @@ function displayCoverPreview(base64) {
 
 if (removeBtn) {
     removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Évite de relancer l'explorateur
+        e.stopPropagation();
         hiddenCoverInput.value = "";
         previewImg.style.display = 'none';
         placeholder.style.display = 'block';
@@ -94,31 +88,22 @@ const projets = JSON.parse(localStorage.getItem('monPortfolioData')) || [];
 const projetActuel = projets.find(p => p.id == projetId);
 
 if (projetActuel) {
-    document.getElementById('project-summary').innerHTML = `
-        <p>Configuration des détails pour : <strong>${projetActuel.titre}</strong></p>
-    `;
+    const summaryContainer = document.getElementById('project-summary');
+    if(summaryContainer) {
+        summaryContainer.innerHTML = `<p>Configuration pour : <strong>${projetActuel.titre}</strong></p>`;
+    }
 }
 
 function chargerDonneesExistantes() {
     const data = JSON.parse(localStorage.getItem(`details_projet_${projetId}`));
-    
     if (data) {
-        // Image de couverture
         if (data.coverImage) displayCoverPreview(data.coverImage);
-
-        // Résumé et Matériel
         if (data.summary) quillSummary.root.innerHTML = data.summary;
         if (data.materiel) document.getElementById('detail-materiel').value = data.materiel;
-
-        // Étapes
         if (data.steps) {
             data.steps.forEach(step => ajouterEtape(step.title, step.desc, step.imgs || []));
         }
-
-        // Section Technique
         if (data.tech) afficherSectionTech(data.tech);
-
-        // Codes
         if (data.codes) {
             data.codes.forEach(c => ajouterBlocCode(c.fileName, c.extension, c.content));
         }
@@ -126,12 +111,11 @@ function chargerDonneesExistantes() {
 }
 
 /**
- * FONCTIONS D'AJOUT DYNAMIQUE
+ * AJOUT DYNAMIQUE
  */
 function ajouterEtape(title = "", desc = "", imgUrls = []) {
     stepCount++;
     const id = stepCount;
-    
     const html = `
         <section class="admin-section dynamic-step" id="step-${id}" data-id="${id}">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -157,7 +141,6 @@ function ajouterEtape(title = "", desc = "", imgUrls = []) {
         </section>`;
 
     document.getElementById('steps-container').insertAdjacentHTML('beforeend', html);
-
     const quill = new Quill(`#editor-step-${id}`, { modules: { toolbar: toolbarOptions }, theme: 'snow' });
     if (desc) quill.root.innerHTML = desc;
     quillStepsEditors[id] = quill;
@@ -165,7 +148,8 @@ function ajouterEtape(title = "", desc = "", imgUrls = []) {
 
 window.supprimerEtape = function(id) {
     if(confirm("Supprimer cette étape ?")) {
-        document.getElementById(`step-${id}`).remove();
+        const el = document.getElementById(`step-${id}`);
+        if(el) el.remove();
         delete quillStepsEditors[id];
     }
 };
@@ -180,7 +164,7 @@ function ajouterBlocCode(fileName = "", extension = ".python", content = "") {
             </div>
             <div class="form-group">
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" class="code-title" placeholder="Nom" value="${fileName}" style="flex: 2;">
+                    <input type="text" class="code-title" placeholder="Nom du fichier" value="${fileName}" style="flex: 2;">
                     <select class="code-extension" style="flex: 1;">
                         <option value=".python" ${extension==='.python'?'selected':''}>.py</option>
                         <option value=".c" ${extension==='.c'?'selected':''}>.c</option>
@@ -188,7 +172,7 @@ function ajouterBlocCode(fileName = "", extension = ".python", content = "") {
                     </select>
                 </div>
             </div>
-            <textarea class="code-content" style="font-family:monospace; height:150px; width:100%;">${content}</textarea>
+            <textarea class="code-content" style="font-family:monospace; height:150px; width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">${content}</textarea>
         </section>`;
     document.getElementById('code-section-container').insertAdjacentHTML('beforeend', html);
 }
@@ -196,25 +180,32 @@ function ajouterBlocCode(fileName = "", extension = ".python", content = "") {
 function afficherSectionTech(data = {title: "", formula: "", result: ""}) {
     const html = `
         <section class="admin-section" id="section-tech">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h2><i class="fas fa-calculator"></i> Technique</h2>
-                <button type="button" onclick="supprimerSection('section-tech', 'tech-btn-wrapper')" class="btn-admin" style="background:#ef4444; padding:5px 10px;"><i class="fas fa-trash"></i></button>
+                <button type="button" onclick="supprimerSection('section-tech')" class="btn-admin" style="background:#ef4444; padding:5px 10px;"><i class="fas fa-trash"></i></button>
             </div>
-            <input type="text" id="tech-title" value="${data.title}" placeholder="Titre">
-            <input type="text" id="tech-formula" value="${data.formula}" placeholder="Formule">
-            <input type="text" id="tech-result" value="${data.result}" placeholder="Résultat">
+            <div class="form-group">
+                <input type="text" id="tech-title" value="${data.title || ''}" placeholder="Titre (ex: Calcul de puissance)" style="margin-bottom:10px;">
+                <input type="text" id="tech-formula" value="${data.formula || ''}" placeholder="Formule (ex: P = U * I)" style="margin-bottom:10px;">
+                <input type="text" id="tech-result" value="${data.result || ''}" placeholder="Résultat final">
+            </div>
         </section>`;
     document.getElementById('tech-section-container').innerHTML = html;
-    document.getElementById('tech-btn-wrapper').style.display = 'none';
+    
+    // Cacher le bouton d'ajout pour éviter les doublons
+    const btnAdd = document.getElementById('add-tech-btn');
+    if(btnAdd) btnAdd.style.display = 'none';
 }
 
-window.supprimerSection = function(sid, wid) {
-    document.getElementById(sid).remove();
-    document.getElementById(wid).style.display = 'block';
+window.supprimerSection = function(sid) {
+    const el = document.getElementById(sid);
+    if(el) el.remove();
+    const btnAdd = document.getElementById('add-tech-btn');
+    if(btnAdd) btnAdd.style.display = 'inline-block';
 };
 
 /**
- * SAUVEGARDE
+ * SAUVEGARDE ET REDIRECTION
  */
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -267,17 +258,28 @@ document.getElementById('details-project-form').addEventListener('submit', async
         };
 
         localStorage.setItem(`details_projet_${projetId}`, JSON.stringify(finalDetails));
-        alert("Enregistré !");
-    window.location.href = `../../pages/project-detail/display.html?id=${projetId}`;
+        alert("Projet enregistré avec succès !");
+
+        // REDIRECTION SÉCURISÉE POUR GITHUB PAGES
+        const isGitHub = window.location.hostname.includes('github.io');
+        const repoName = 'portfolio-youcef'; // Remplace par le nom EXACT de ton dépôt si différent
+        
+        if (isGitHub) {
+            window.location.href = `/${repoName}/pages/project-detail/display.html?id=${projetId}`;
+        } else {
+            window.location.href = `../../pages/project-detail/display.html?id=${projetId}`;
+        }
+
     } catch (err) {
         console.error(err);
-        alert("Erreur");
+        alert("Une erreur est survenue lors de la sauvegarde.");
     }
 });
 
-// Events init
+// Initialisation des événements
 document.getElementById('add-step-btn').addEventListener('click', () => ajouterEtape());
 document.getElementById('add-tech-btn').addEventListener('click', () => afficherSectionTech());
 document.getElementById('add-code-btn').addEventListener('click', () => ajouterBlocCode());
 
-window.addEventListener('load', chargerDonneesExistantes);
+// On attend que le DOM soit chargé pour remplir les données
+document.addEventListener('DOMContentLoaded', chargerDonneesExistantes);
