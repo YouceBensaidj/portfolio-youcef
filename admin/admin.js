@@ -1,4 +1,5 @@
 // 1. IMPORTATIONS FIREBASE
+// Correction du chemin : si admin.js est dans /admin/, le config est dans ./project-form/
 import { db } from './project-form/firebase-config.js';
 import { 
     collection, 
@@ -29,14 +30,18 @@ async function afficherListeProjetsAdmin() {
                     <div class="project-info" style="display:flex; align-items:center; gap:15px;">
                         <img src="${projet.coverImage || ''}" style="width:100px; height:70px; object-fit:cover; border-radius: 4px;">
                         <div>
-                            <h3 style="margin:0">${projet.title}</h3>
-                            <p style="margin:5px 0; font-size: 0.9em; color: #666;">${projet.summary}</p>
+                            <h3 style="margin:0">${projet.title || "Sans titre"}</h3>
+                            <p style="margin:5px 0; font-size: 0.9em; color: #666;">${projet.summary || "Pas de description"}</p>
                         </div>
                     </div>
                     <div class="admin-actions" style="display: flex; gap: 10px;">
-                        <button class="btn-details" onclick="allerAuFormulaireDetails('${id}')" style="background: #4361ee; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">DÉTAILS</button>
-                        <a href="?edit=${id}" style="background: #f72585; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 13px;">MODIFIER</a>
-                        <button onclick="supprimerProjet('${id}')" style="background: #e63946; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">SUPPRIMER</button>
+                        <!-- Appel via window car le script est un module -->
+                        <button class="btn-details" onclick="window.allerAuFormulaireDetails('${id}')" style="background: #4361ee; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">DÉTAILS</button>
+                        
+                        <!-- Correction du lien MODIFIER : on remonte vers l'index du dossier admin -->
+                        <a href="../index.html?edit=${id}" style="background: #f72585; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 13px;">MODIFIER</a>
+                        
+                        <button onclick="window.supprimerProjet('${id}')" style="background: #e63946; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">SUPPRIMER</button>
                     </div>
                 </div>`;
         });
@@ -52,17 +57,16 @@ if (form) {
     const editId = urlParams.get('edit');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    // MODE MODIFICATION : Pré-remplir
     if (editId) {
         submitBtn.textContent = "METTRE À JOUR LE PROJET";
         const docRef = doc(db, "details_projets", editId);
         getDoc(docRef).then(snap => {
             if (snap.exists()) {
                 const d = snap.data();
-                document.getElementById('project-title').value = d.title;
-                document.getElementById('project-desc').value = d.summary;
+                document.getElementById('project-title').value = d.title || "";
+                document.getElementById('project-desc').value = d.summary || "";
                 document.getElementById('project-skills').value = (d.skills || []).join(', ');
-                form.dataset.oldImg = d.coverImage;
+                form.dataset.oldImg = d.coverImage || "";
             }
         });
     }
@@ -95,7 +99,8 @@ if (form) {
                 await addDoc(collection(db, "details_projets"), { ...data, createdAt: new Date() });
                 alert("Projet ajouté !");
             }
-            window.location.href = window.location.pathname; // Recharge sans le ?edit=
+            // Après l'ajout ou modif, on renvoie vers la liste
+            window.location.href = "projects/liste_des_projets.html";
         } catch (err) {
             alert("Erreur !");
             console.error(err);
@@ -105,17 +110,20 @@ if (form) {
     });
 }
 
-// --- 4. FONCTIONS GLOBALES (Window) ---
+// --- 4. FONCTIONS GLOBALES (Indispensables pour le onclick dans le HTML) ---
 window.supprimerProjet = async (id) => {
     if (confirm("Supprimer sur Firebase ?")) {
-        await deleteDoc(doc(db, "details_projets", id));
-        afficherListeProjetsAdmin();
+        try {
+            await deleteDoc(doc(db, "details_projets", id));
+            afficherListeProjetsAdmin();
+        } catch (e) {
+            console.error(e);
+        }
     }
 };
 
 window.allerAuFormulaireDetails = function(id) {
-    // On remonte d'un niveau pour sortir de 'projects' 
-    // puis on entre dans 'project-form'
+    // Sort de 'projects' pour aller dans 'project-form'
     window.location.href = "../project-form/details_form.html?id=" + id;
 };
 
