@@ -1,29 +1,30 @@
 function chargerMaNavigation() {
-    // On cherche la balise <header> que tu as ajoutée dans admin.html
     const cible = document.querySelector('header');
+    if (!cible) return;
 
-    if (cible) {
-        /* TRÈS IMPORTANT : 
-           Puisque admin.html et navigate.html sont dans le MÊME dossier (admin_HTML),
-           on appelle juste 'navigate.html'.
-        */
-        fetch('../../navigate/navigate.html') 
+    // Selon l'arborescence image_8fc71c.png :
+    const cheminsPossibles = [
+        '../navigate/navigate.html', // Chemin depuis 'projects/liste_des_projets.html'
+        './navigate/navigate.html',  // Chemin depuis 'admin/index.html'
+        'navigate/navigate.html'     // Chemin de secours
+    ];
+
+    const tenterFetch = (index) => {
+        if (index >= cheminsPossibles.length) return;
+
+        fetch(cheminsPossibles[index])
             .then(response => {
-                if (!response.ok) throw new Error("Erreur : Impossible de trouver navigate.html");
+                if (!response.ok) throw new Error();
                 return response.text();
             })
             .then(html => {
-                // On injecte le contenu
                 cible.innerHTML = html;
-                console.log("Navigation chargée avec succès !");
+                console.log("Navigation chargée via : " + cheminsPossibles[index]);
             })
-            .catch(err => {
-                console.error("Erreur de chargement :", err);
-            });
-    } else {
-        console.error("Erreur : La balise <header> est absente de ton fichier HTML.");
-    }
+            .catch(() => tenterFetch(index + 1));
+    };
+
+    tenterFetch(0);
 }
 
-// Lancement automatique
 document.addEventListener("DOMContentLoaded", chargerMaNavigation);
