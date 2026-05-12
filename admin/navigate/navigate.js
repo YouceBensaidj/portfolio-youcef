@@ -2,53 +2,41 @@ function chargerMaNavigation() {
     const cible = document.querySelector('header');
     if (!cible) return;
 
-    // 1. Déterminer le nom du repo (ex: portfolio-youcef)
     const pathArray = window.location.pathname.split('/');
     const repoName = pathArray[1]; 
-    const baseRoot = `/${repoName}`; // Résultat: /portfolio-youcef
+    const baseRoot = `/${repoName}`; // /portfolio-youcef
 
-    // 2. Chemins pour le fetch
     const cheminGitHub = `${baseRoot}/admin/navigate/navigate.html`;
-    const cheminLocal = '/admin/navigate/navigate.html';
 
     fetch(cheminGitHub)
-        .then(response => {
-            if (!response.ok) return fetch(cheminLocal);
-            return response;
-        })
         .then(response => {
             if (!response.ok) throw new Error("Navigate.html introuvable");
             return response.text();
         })
         .then(html => {
-            // 3. Injecter le HTML
             cible.innerHTML = html;
 
-            // 4. CORRECTION AUTOMATIQUE DES LIENS (La clé du problème)
             const liens = cible.querySelectorAll('a');
             liens.forEach(lien => {
-                const href = lien.getAttribute('href');
+                let href = lien.getAttribute('href');
                 
-                // On ignore les liens vides, les ancres (#) ou les liens externes (http)
                 if (href && href !== "#" && !href.startsWith('http')) {
-                    // On nettoie le href pour éviter les doubles slashes
-                    const cleanHref = href.startsWith('/') ? href : `/${href}`;
                     
-                    // On force le lien à partir de la racine du projet admin
-                    // Si le lien est "index.html", il devient "/portfolio-youcef/admin/index.html"
-                    if (cleanHref.includes('admin/')) {
-                         lien.href = `${baseRoot}${cleanHref}`;
+                    if (href.startsWith('ROOT:')) {
+                        // CAS 1 : Lien vers le site public (ex: ROOT:index.html)
+                        // On enlève "ROOT:" et on pointe vers la racine du repo
+                        const cleanHref = href.replace('ROOT:', '');
+                        lien.href = `${baseRoot}/${cleanHref}`;
                     } else {
-                         lien.href = `${baseRoot}/admin${cleanHref}`;
+                        // CAS 2 : Lien interne à l'administration
+                        // On pointe vers /portfolio-youcef/admin/le-lien
+                        lien.href = `${baseRoot}/admin/${href}`;
                     }
                 }
             });
-
-            console.log("Navigation GitHub Pages chargée et liens corrigés !");
+            console.log("Navigation et liens (Public/Admin) corrigés !");
         })
-        .catch(err => {
-            console.error("Erreur critique de navigation :", err);
-        });
+        .catch(err => console.error("Erreur :", err));
 }
 
 document.addEventListener("DOMContentLoaded", chargerMaNavigation);
