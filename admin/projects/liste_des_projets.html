@@ -13,11 +13,13 @@
     <main class="admin-container">
         <section class="admin-section">
             <h2>Liste des Projets Existants</h2>
+            <!-- Le JS va injecter les projets ici -->
             <div id="admin-projects-list" class="admin-list"></div>
         </section>
     </main>
 
-    <script src="../admin.js"></script>
+    <!-- CRITIQUE : Ajout de type="module" et suppression du doublon -->
+    <script type="module" src="../admin.js"></script>
     <script src="../navigate/navigate.js"></script>
 </body>
 </html>
