@@ -1,6 +1,6 @@
 // 1. IMPORTATION DES OUTILS FIREBASE
 // Vérifie que le chemin remonte bien jusqu'à ton fichier de config
-import { db } from '../../admin/project-form/firebase-config.js'; 
+import { db } from '../../admin/project-form/firebase-config.js';
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 async function afficherProjetsPublics() {
