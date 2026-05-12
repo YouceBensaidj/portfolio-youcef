@@ -1,14 +1,21 @@
 // 1. IMPORTATION DES OUTILS FIREBASE
-// Vérifie que le chemin remonte bien jusqu'à ton fichier de config
+// On utilise exactement la même version que dans ton firebase-config.js (10.7.1)
 import { db } from '../../admin/project-form/firebase-config.js';
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 async function afficherProjetsPublics() {
     const container = document.getElementById('projects-container'); 
     
-    // Message de chargement pour l'utilisateur
+    // Message de chargement initial
     if (container) {
         container.innerHTML = "<p style='color:white; text-align:center;'>Connexion au Cloud Firebase...</p>";
+    }
+
+    // Sécurité : Vérifier si db est bien chargé
+    if (!db) {
+        console.error("Erreur : La base de données (db) est indéfinie. Vérifiez le chemin de l'import.");
+        if (container) container.innerHTML = "<p style='color:red; text-align:center;'>Erreur de configuration Cloud.</p>";
+        return;
     }
 
     try {
@@ -24,10 +31,9 @@ async function afficherProjetsPublics() {
 
         querySnapshot.forEach((docSnap) => {
             const projet = docSnap.data();
-            const id = docSnap.id; // L'ID du document (ex: "projet_test")
+            const id = docSnap.id; 
 
             // 3. LOGIQUE DE LIEN DYNAMIQUE
-            // On envoie vers display.html avec l'ID récupéré sur Firebase
             const lienDestination = `../project-detail/display.html?id=${id}`;
 
             // Gestion des badges (matériel)
@@ -35,7 +41,7 @@ async function afficherProjetsPublics() {
                 ? projet.materiel.split(',').map(s => `<span class="tag">${s.trim()}</span>`).join('') 
                 : "";
 
-            // Nettoyage du texte riche (Quill) pour l'aperçu de la description
+            // Nettoyage du texte riche (Quill)
             const descriptionCourte = projet.summary 
                 ? projet.summary.replace(/<[^>]*>/g, '').substring(0, 120) + '...' 
                 : "Découvrez les détails de ce projet.";
@@ -62,12 +68,14 @@ async function afficherProjetsPublics() {
 
     } catch (error) {
         console.error("Erreur critique Firebase :", error);
-        container.innerHTML = `
-            <div style="color: #ff4444; text-align: center; padding: 20px;">
-                <p>⚠️ Erreur de synchronisation Cloud.</p>
-                <small>${error.message}</small>
-            </div>
-        `;
+        if (container) {
+            container.innerHTML = `
+                <div style="color: #ff4444; text-align: center; padding: 20px;">
+                    <p>⚠️ Erreur de synchronisation Cloud.</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
+        }
     }
 }
 
