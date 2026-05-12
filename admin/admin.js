@@ -113,10 +113,10 @@ window.supprimerProjet = async (id) => {
     }
 };
 
-window.allerAuFormulaireDetails = (id) => {
-    // On remonte de DEUX niveaux pour sortir de 'projects' et 'admin' 
-    // afin d'atteindre 'project-form' à la racine
-    window.location.href = "../../project-form/details_form.html?id=" + id;
+window.allerAuFormulaireDetails = function(id) {
+    // On remonte d'un niveau pour sortir de 'projects' 
+    // puis on entre dans 'project-form'
+    window.location.href = "../project-form/details_form.html?id=" + id;
 };
 
 // INITIALISATION
