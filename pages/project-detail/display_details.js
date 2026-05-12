@@ -1,7 +1,8 @@
 // 1. IMPORTATION DE FIREBASE
-// Vérifie bien que le chemin vers firebase-config.js est correct selon ton dossier
+// Importation de ta config (assure-toi que le chemin ../../ est correct)
 import { db } from '../../admin/project-form/firebase-config.js'; 
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+// UTILISATION DE LA VERSION 10.7.1 (comme dans ta config)
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // --- [A] BARRE DE PROGRESSION LECTURE ---
 function initReadingProgress() {
@@ -18,9 +19,7 @@ function initReadingProgress() {
 
 // --- [B] ANIMATIONS AU SCROLL ---
 function initScrollReveal() {
-    const targets = document.querySelectorAll(
-        '.project-step, .tech-card, .view-section, .project-header'
-    );
+    const targets = document.querySelectorAll('.project-step, .tech-card, .view-section, .project-header');
     
     targets.forEach(el => el.classList.add('reveal'));
 
@@ -49,12 +48,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const projetIdRaw = urlParams.get('id');
 
     if (!projetIdRaw) {
-        console.error("Aucun ID trouvé dans l'URL. Utilisez ?id=votre_id");
+        console.error("Aucun ID trouvé dans l'URL.");
+        return;
+    }
+
+    // VERIFICATION DE LA CONNEXION DB
+    if (!db) {
+        console.error("Firebase DB non initialisée. Vérifiez firebase-config.js");
         return;
     }
 
     try {
-        // Récupération du document dans la collection "details_projets"
         const docRef = doc(db, "details_projets", projetIdRaw);
         const docSnap = await getDoc(docRef);
 
@@ -62,17 +66,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             const details = docSnap.data();
             renderProjectDetails(details);
         } else {
-            console.warn("Projet introuvable dans Firestore pour l'ID :", projetIdRaw);
+            console.warn("Projet introuvable dans Firestore :", projetIdRaw);
+            const container = document.getElementById('view-steps-container');
+            if (container) container.innerHTML = "<h2>Projet introuvable</h2>";
         }
     } catch (error) {
-        console.error("Erreur Firebase :", error);
+        console.error("Erreur Firebase détaillée :", error);
     }
 });
 
 // --- [D] FONCTION D'AFFICHAGE DES DONNÉES ---
 function renderProjectDetails(details) {
     // 1. TITRE ET BADGES
-    document.getElementById('view-title').textContent = details.title || "Détails du Projet";
+    const titleEl = document.getElementById('view-title');
+    if (titleEl) titleEl.textContent = details.title || "Détails du Projet";
     
     const badgesContainer = document.getElementById('view-badges');
     if (badgesContainer && details.materiel) {
@@ -81,12 +88,11 @@ function renderProjectDetails(details) {
     }
 
     // IMAGE DE COUVERTURE
-    const coverContainer = document.getElementById('project-cover-container');
     const coverImg = document.getElementById('view-cover-img');
-    if (details.coverImage && coverContainer && coverImg) {
+    const coverContainer = document.getElementById('project-cover-container');
+    if (details.coverImage && coverImg) {
         coverImg.src = details.coverImage;
-        coverImg.classList.add('zoom-target'); 
-        coverContainer.style.display = 'block';
+        if (coverContainer) coverContainer.style.display = 'block';
     }
     
     // RÉSUMÉ (Quill HTML)
@@ -100,7 +106,7 @@ function renderProjectDetails(details) {
     if (stepsContainer && details.steps) {
         stepsContainer.innerHTML = ''; 
         details.steps.forEach((step, index) => {
-            const imgCount = step.imgs ? step.imgs.length : 0;
+            const imgCount = (step.imgs && Array.isArray(step.imgs)) ? step.imgs.length : 0;
             
             let layoutClass = "project-step" + (imgCount === 0 ? " no-image-step" : imgCount === 1 ? " single-photo" : " multi-photos");
 
@@ -114,7 +120,7 @@ function renderProjectDetails(details) {
             }
 
             stepsContainer.insertAdjacentHTML('beforeend', `
-                <section class="${layoutClass}">
+                <section class="${layoutClass} reveal visible">
                     <div class="step-text">
                      <h2>
                          <span class="step-number">${index + 1}</span>
@@ -130,7 +136,7 @@ function renderProjectDetails(details) {
 
     // 3. SECTION TECHNIQUE
     const techSection = document.getElementById('view-tech-section');
-    if (details.tech && techSection) {
+    if (details.tech && details.tech.formula && techSection) {
         techSection.style.display = 'block';
         document.getElementById('view-tech-formula').textContent = details.tech.formula;
         document.getElementById('view-tech-result').innerHTML = `Résultat : <strong>${details.tech.result}</strong>`;
@@ -139,8 +145,7 @@ function renderProjectDetails(details) {
     // 4. CODES SOURCE
     const codeSection = document.getElementById('view-code-section');
     const codeSource = document.getElementById('view-code-source');
-
-    if (codeSection && codeSource && details.codes) {
+    if (codeSection && codeSource && details.codes && details.codes.length > 0) {
         codeSection.style.display = 'block';
         codeSource.innerHTML = details.codes.map(c => {
             const langClass = c.extension ? c.extension.replace('.', '') : 'clike';
@@ -165,29 +170,23 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-const lightbox = document.getElementById('lightbox');
-const lightboxImg = document.getElementById('lightbox-img');
-
-function openLightbox(imgSrc) {
-    if(!lightbox || !lightboxImg) return;
-    lightboxImg.src = imgSrc;
-    lightbox.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-    if(!lightbox) return;
-    lightbox.style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
+// Gestion Lightbox simplifiée
 document.addEventListener('click', (event) => {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
     if (event.target.classList.contains('zoom-target')) {
-        openLightbox(event.target.src);
+        if(lightbox && lightboxImg) {
+            lightboxImg.src = event.target.src;
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
     }
-    if (event.target === lightbox || (event.target.closest('#lightbox') && event.target.tagName === 'SPAN')) {
-        closeLightbox();
+    
+    if (event.target.id === 'lightbox' || event.target.classList.contains('close-lightbox')) {
+        if(lightbox) {
+            lightbox.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
     }
 });
-
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
