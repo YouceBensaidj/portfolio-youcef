@@ -1,18 +1,25 @@
-<nav class="dashboard-nav">
-    <div class="nav-right">
-        <!-- Lien vers le site public (racine) -->
-        <a href="/portfolio-youcef/index.html">🏠 Voir le site</a>
-
-        <!-- Menu Gérer Projets -->
-        <div class="dropdown">
-            <a href="#">📂 Gérer Projets</a>
-            <div class="dropdown-content">
-                <!-- Toujours partir de la racine du dépôt -->
-                <a href="/portfolio-youcef/admin/index.html">Ajouter Projet</a>
-                <a href="/portfolio-youcef/admin/projects/liste_des_projets.html">Liste des Projets</a>
-            </div>
-        </div>
-        
-        <a href="/portfolio-youcef/admin/settings.html">⚙️ Paramètres</a>
+<nav class="admin-navbar">
+    <div class="admin-logo">
+        <span class="status-dot"></span>
+        <p>Dashboard <span>Admin</span></p>
     </div>
+
+    <ul class="admin-menu">
+        <!-- "index.html" seul ici montera à la racine du repo via le script -->
+        <li><a href="/index.html" data-link><span>🏠</span> Voir le site</a></li>
+
+        <li class="dropdown">
+            <!-- href="#" évite que la page ne saute ou ne recharge au clic sur le parent -->
+            <a href="#" class="dropbtn active"><span>📂</span> Gérer Projets</a>
+            <div class="dropdown-content">
+                <!-- On écrit les chemins comme s'ils étaient tous dans le dossier /admin/ -->
+                <a href="index.html">Ajouter Projet</a>
+                <a href="projects/liste_des_projets.html">Liste des Projets</a>
+                <!-- Pour voir le projet sur le site public -->
+                <a href="/pages/projects/projects.html">Voir le projet</a>
+            </div>
+        </li>
+
+        <li><a href="parametres.html" data-link><span>⚙️</span> Paramètres</a></li>
+    </ul>
 </nav>

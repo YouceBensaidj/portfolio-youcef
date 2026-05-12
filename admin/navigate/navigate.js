@@ -2,18 +2,18 @@ function chargerMaNavigation() {
     const cible = document.querySelector('header');
     if (!cible) return;
 
-    // Récupère le nom du dossier racine (ex: /portfolio-youcef/)
+    // 1. Déterminer le nom du repo (ex: portfolio-youcef)
     const pathArray = window.location.pathname.split('/');
     const repoName = pathArray[1]; 
+    const baseRoot = `/${repoName}`; // Résultat: /portfolio-youcef
 
-    // On construit le chemin absolu pour GitHub Pages
-    // Cela permet d'accéder au fichier peu importe la profondeur du dossier actuel
-    const cheminGitHub = `/${repoName}/admin/navigate/navigate.html`;
+    // 2. Chemins pour le fetch
+    const cheminGitHub = `${baseRoot}/admin/navigate/navigate.html`;
     const cheminLocal = '/admin/navigate/navigate.html';
 
     fetch(cheminGitHub)
         .then(response => {
-            if (!response.ok) return fetch(cheminLocal); // Test local si GitHub échoue
+            if (!response.ok) return fetch(cheminLocal);
             return response;
         })
         .then(response => {
@@ -21,15 +21,33 @@ function chargerMaNavigation() {
             return response.text();
         })
         .then(html => {
+            // 3. Injecter le HTML
             cible.innerHTML = html;
-            console.log("Navigation GitHub Pages chargée !");
+
+            // 4. CORRECTION AUTOMATIQUE DES LIENS (La clé du problème)
+            const liens = cible.querySelectorAll('a');
+            liens.forEach(lien => {
+                const href = lien.getAttribute('href');
+                
+                // On ignore les liens vides, les ancres (#) ou les liens externes (http)
+                if (href && href !== "#" && !href.startsWith('http')) {
+                    // On nettoie le href pour éviter les doubles slashes
+                    const cleanHref = href.startsWith('/') ? href : `/${href}`;
+                    
+                    // On force le lien à partir de la racine du projet admin
+                    // Si le lien est "index.html", il devient "/portfolio-youcef/admin/index.html"
+                    if (cleanHref.includes('admin/')) {
+                         lien.href = `${baseRoot}${cleanHref}`;
+                    } else {
+                         lien.href = `${baseRoot}/admin${cleanHref}`;
+                    }
+                }
+            });
+
+            console.log("Navigation GitHub Pages chargée et liens corrigés !");
         })
         .catch(err => {
-            console.warn("Tentative avec chemin relatif suite à l'échec du chemin absolu...");
-            // Dernier recours : chemin relatif basé sur image_8fc71c.png
-            fetch('../navigate/navigate.html')
-                .then(res => res.text())
-                .then(html => { cible.innerHTML = html; });
+            console.error("Erreur critique de navigation :", err);
         });
 }
 
