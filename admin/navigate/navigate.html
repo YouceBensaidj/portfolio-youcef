@@ -1,22 +1,18 @@
-<nav class="admin-navbar">
-    <div class="admin-logo">
-        <span class="status-dot"></span>
-        <p>Dashboard <span>Admin</span></p>
-    </div>
+<nav class="dashboard-nav">
+    <div class="nav-right">
+        <!-- Lien vers le site public (racine) -->
+        <a href="/portfolio-youcef/index.html">🏠 Voir le site</a>
 
-    
-    <ul class="admin-menu">
-        <li><a href="../index.html" data-link><span>🏠</span> Voir le site</a></li>
-
-        <li class="dropdown">
-            <a href="" class="dropbtn active"><span>📂</span> Gérer Projets</a>
+        <!-- Menu Gérer Projets -->
+        <div class="dropdown">
+            <a href="#">📂 Gérer Projets</a>
             <div class="dropdown-content">
-                <a href="index.html">Ajouter Projet</a>
-                <a href="projects/liste_des_projets.html">Liste des Projets</a>
-                <a href="../pages/projects/projects.html">voir le projet </a>
+                <!-- Toujours partir de la racine du dépôt -->
+                <a href="/portfolio-youcef/admin/index.html">Ajouter Projet</a>
+                <a href="/portfolio-youcef/admin/projects/liste_des_projets.html">Liste des Projets</a>
             </div>
-        </li>
-
-        <li><a href="parametres.html" data-link><span>⚙️</span> Paramètres</a></li>
-    </ul>
+        </div>
+        
+        <a href="/portfolio-youcef/admin/settings.html">⚙️ Paramètres</a>
+    </div>
 </nav>
