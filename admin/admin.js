@@ -1,20 +1,20 @@
+// 1. IMPORTATIONS FIREBASE
 import { db } from './project-form/firebase-config.js';
 import { 
     collection, 
     getDocs, 
     doc, 
-    deleteDoc, 
     addDoc, 
     updateDoc, 
+    deleteDoc, 
     getDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// --- 1. AFFICHAGE DE LA LISTE (FIREBASE) ---
+// --- 2. AFFICHAGE DE LA LISTE ---
 async function afficherListeProjetsAdmin() {
     const listContainer = document.getElementById('admin-projects-list');
     if (!listContainer) return; 
-    
-    listContainer.innerHTML = '<p style="text-align:center;">Chargement des projets...</p>'; 
+    listContainer.innerHTML = '<p>Chargement des projets...</p>'; 
 
     try {
         const querySnapshot = await getDocs(collection(db, "details_projets"));
@@ -22,67 +22,49 @@ async function afficherListeProjetsAdmin() {
 
         querySnapshot.forEach((projetDoc) => {
             const projet = projetDoc.data();
-            const id = projetDoc.id; // L'ID unique généré par Firebase
+            const id = projetDoc.id;
 
             listContainer.innerHTML += `
                 <div class="admin-list-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: white;">
                     <div class="project-info" style="display:flex; align-items:center; gap:15px;">
-                        <img src="${projet.coverImage || projet.image}" style="width:100px; height:70px; object-fit:cover; border-radius: 4px;">
+                        <img src="${projet.coverImage || ''}" style="width:100px; height:70px; object-fit:cover; border-radius: 4px;">
                         <div>
-                            <h3 style="margin:0">${projet.title || projet.titre}</h3>
-                            <p style="margin:5px 0; font-size: 0.9em; color: #666;">${projet.summary || projet.description}</p>
+                            <h3 style="margin:0">${projet.title}</h3>
+                            <p style="margin:5px 0; font-size: 0.9em; color: #666;">${projet.summary}</p>
                         </div>
                     </div>
                     <div class="admin-actions" style="display: flex; gap: 10px;">
                         <button class="btn-details" onclick="allerAuFormulaireDetails('${id}')" style="background: #4361ee; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">DÉTAILS</button>
-                        <a href="project-form/index.html?edit=${id}" class="btn-edit" style="background: #f72585; color: white; text-decoration:none; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-size: 13px;">MODIFIER</a>
-                        <button class="btn-delete" onclick="supprimerProjet('${id}')" style="background: #e63946; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">SUPPRIMER</button>
+                        <a href="?edit=${id}" style="background: #f72585; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 13px;">MODIFIER</a>
+                        <button onclick="supprimerProjet('${id}')" style="background: #e63946; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">SUPPRIMER</button>
                     </div>
                 </div>`;
         });
     } catch (e) {
-        console.error("Erreur chargement projets:", e);
+        console.error("Erreur Firebase liste:", e);
     }
 }
 
-// --- 2. NAVIGATION DÉTAILS ---
-window.allerAuFormulaireDetails = function(id) {
-    const currentPath = window.location.pathname;
-    const prefix = currentPath.includes('/projects/') ? "../" : "";
-    window.location.href = `${prefix}project-form/details_form.html?id=${id}`;
-};
-
-// --- 3. SUPPRESSION (FIREBASE) ---
-window.supprimerProjet = async function(id) {
-    if (confirm("Voulez-vous vraiment supprimer ce projet sur Firebase ?")) {
-        try {
-            await deleteDoc(doc(db, "details_projets", id));
-            alert("Projet supprimé !");
-            afficherListeProjetsAdmin();
-        } catch (e) {
-            alert("Erreur lors de la suppression.");
-        }
-    }
-};
-
-// --- 4. GESTION DU FORMULAIRE (AJOUT & MODIFICATION) ---
+// --- 3. GESTION DU FORMULAIRE (AJOUT / MODIF) ---
 const form = document.getElementById('add-project-form');
 if (form) {
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    // Si on est en mode édition, on pré-remplit
+    // MODE MODIFICATION : Pré-remplir
     if (editId) {
         submitBtn.textContent = "METTRE À JOUR LE PROJET";
-        const docSnap = await getDoc(doc(db, "details_projets", editId));
-        if (docSnap.exists()) {
-            const p = docSnap.data();
-            document.getElementById('project-title').value = p.title || p.titre;
-            document.getElementById('project-desc').value = p.summary || p.description;
-            document.getElementById('project-skills').value = (p.skills || []).join(', ');
-            form.dataset.oldImage = p.coverImage || p.image;
-        }
+        const docRef = doc(db, "details_projets", editId);
+        getDoc(docRef).then(snap => {
+            if (snap.exists()) {
+                const d = snap.data();
+                document.getElementById('project-title').value = d.title;
+                document.getElementById('project-desc').value = d.summary;
+                document.getElementById('project-skills').value = (d.skills || []).join(', ');
+                form.dataset.oldImg = d.coverImage;
+            }
+        });
     }
 
     form.addEventListener('submit', async (e) => {
@@ -90,28 +72,20 @@ if (form) {
         submitBtn.disabled = true;
 
         const title = document.getElementById('project-title').value;
-        const description = document.getElementById('project-desc').value;
+        const summary = document.getElementById('project-desc').value;
         const skills = document.getElementById('project-skills').value.split(',').map(s => s.trim());
         const imageFile = document.getElementById('project-image').files[0];
 
-        let imageData = form.dataset.oldImage || "";
-
+        let finalImg = form.dataset.oldImg || "";
         if (imageFile) {
-            const toBase64 = file => new Promise(res => {
-                const reader = new FileReader();
-                reader.onload = () => res(reader.result);
-                reader.readAsDataURL(file);
+            finalImg = await new Promise(res => {
+                const r = new FileReader();
+                r.onload = () => res(r.result);
+                r.readAsDataURL(imageFile);
             });
-            imageData = await toBase64(imageFile);
         }
 
-        const data = {
-            title: title,
-            summary: description,
-            skills: skills,
-            coverImage: imageData,
-            updatedAt: new Date()
-        };
+        const data = { title, summary, skills, coverImage: finalImg, updatedAt: new Date() };
 
         try {
             if (editId) {
@@ -121,15 +95,27 @@ if (form) {
                 await addDoc(collection(db, "details_projets"), { ...data, createdAt: new Date() });
                 alert("Projet ajouté !");
             }
-            window.location.href = "../index.html"; 
+            window.location.href = window.location.pathname; // Recharge sans le ?edit=
         } catch (err) {
+            alert("Erreur !");
             console.error(err);
-            alert("Erreur lors de l'enregistrement");
         } finally {
             submitBtn.disabled = false;
         }
     });
 }
 
-// 5. INITIALISATION
-window.addEventListener('DOMContentLoaded', afficherListeProjetsAdmin);
+// --- 4. FONCTIONS GLOBALES (Window) ---
+window.supprimerProjet = async (id) => {
+    if (confirm("Supprimer sur Firebase ?")) {
+        await deleteDoc(doc(db, "details_projets", id));
+        afficherListeProjetsAdmin();
+    }
+};
+
+window.allerAuFormulaireDetails = (id) => {
+    window.location.href = `project-form/details_form.html?id=${id}`;
+};
+
+// INITIALISATION
+document.addEventListener('DOMContentLoaded', afficherListeProjetsAdmin);

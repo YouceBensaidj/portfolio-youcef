@@ -15,6 +15,7 @@
 
         <section class="admin-section">
             <h2>Ajouter un Nouveau Projet</h2>
+            <!-- L'ID du formulaire est correct pour le JS -->
             <form id="add-project-form" class="admin-form">
                 <div class="form-group">
                     <label for="project-title">Titre du Projet :</label>
@@ -34,13 +35,23 @@
                 <div class="form-group">
                     <label for="project-image">Image du Projet :</label>
                     <input type="file" id="project-image" name="image" accept="image/*">
-                    <p class="help-text">L'image sera stockée localement dans le dossier /images</p>
+                    <p class="help-text">L'image sera stockée sur Firebase</p>
                 </div>
                 <button type="submit" class="btn-admin">AJOUTER LE PROJET</button>
             </form>
         </section>
 
-   <script type="module" src="admin.js"></script>
+        <!-- AJOUTE CETTE SECTION : Sinon ta liste ne s'affichera nulle part ! -->
+        <section class="admin-section">
+            <h2>Liste des Projets Existants</h2>
+            <div id="admin-projects-list">
+                <!-- Les projets chargés depuis Firebase apparaîtront ici -->
+            </div>
+        </section>
+    </main>
+
+    <!-- UN SEUL APPEL pour admin.js avec type="module" -->
+    <script type="module" src="admin.js"></script>
     <script src="navigate/navigate.js"></script>
 </body>
 </html>
