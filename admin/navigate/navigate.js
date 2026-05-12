@@ -7,7 +7,7 @@ function chargerMaNavigation() {
            Puisque admin.html et navigate.html sont dans le MÊME dossier (admin_HTML),
            on appelle juste 'navigate.html'.
         */
-        fetch('navigate/navigate.html')
+        fetch('../../navigate/navigate.html') 
             .then(response => {
                 if (!response.ok) throw new Error("Erreur : Impossible de trouver navigate.html");
                 return response.text();
