@@ -1,3 +1,12 @@
+import { db } from './firebase-config.js';
+import { 
+    collection, 
+    addDoc, 
+    doc, 
+    setDoc, 
+    getDoc 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
 /**
  * CONFIGURATION ET VARIABLES GLOBALES
  */
@@ -12,13 +21,11 @@ const toolbarOptions = [
     ['link', 'clean']
 ];
 
-// Initialisation de l'éditeur du résumé principal
 const quillSummary = new Quill('#editor-summary', {
     modules: { toolbar: toolbarOptions },
     theme: 'snow'
 });
 
-// Stockage des instances Quill pour les étapes
 const quillStepsEditors = {};
 let stepCount = 0;
 let codeCount = 0;
@@ -34,30 +41,9 @@ const removeBtn = document.getElementById('remove-cover-btn');
 const hiddenCoverInput = document.getElementById('project-cover-base64');
 
 if (dropZone) {
-    // Ouvrir l'explorateur au clic sur la zone
     dropZone.addEventListener('click', () => fileInput.click());
-
     fileInput.addEventListener('change', function() {
         if (this.files && this.files[0]) handleCoverFile(this.files[0]);
-    });
-
-    // Drag & Drop
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#2563eb";
-        dropZone.style.background = "rgba(37, 99, 235, 0.05)";
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.borderColor = "#cbd5e1";
-        dropZone.style.background = "#f8fafc";
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#cbd5e1";
-        const file = e.dataTransfer.files[0];
-        handleCoverFile(file);
     });
 }
 
@@ -76,52 +62,39 @@ function displayCoverPreview(base64) {
     hiddenCoverInput.value = base64;
 }
 
-if (removeBtn) {
-    removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Évite de relancer l'explorateur
-        hiddenCoverInput.value = "";
-        previewImg.style.display = 'none';
-        placeholder.style.display = 'block';
-        removeBtn.style.display = 'none';
-        fileInput.value = "";
-    });
-}
-
 /**
- * CHARGEMENT DES DONNÉES
+ * CHARGEMENT DEPUIS FIREBASE (Pour ordi ET téléphone)
  */
-const projets = JSON.parse(localStorage.getItem('monPortfolioData')) || [];
-const projetActuel = projets.find(p => p.id == projetId);
+async function chargerDonneesFirebase() {
+    if (!projetId) return;
 
-if (projetActuel) {
-    document.getElementById('project-summary').innerHTML = `
-        <p>Configuration des détails pour : <strong>${projetActuel.titre}</strong></p>
-    `;
-}
+    try {
+        const docRef = doc(db, "details_projets", projetId);
+        const docSnap = await getDoc(docRef);
 
-function chargerDonneesExistantes() {
-    const data = JSON.parse(localStorage.getItem(`details_projet_${projetId}`));
-    
-    if (data) {
-        // Image de couverture
-        if (data.coverImage) displayCoverPreview(data.coverImage);
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            
+            // 1. Image et Résumé
+            if (data.coverImage) displayCoverPreview(data.coverImage);
+            if (data.summary) quillSummary.root.innerHTML = data.summary;
+            if (data.materiel) document.getElementById('detail-materiel').value = data.materiel;
 
-        // Résumé et Matériel
-        if (data.summary) quillSummary.root.innerHTML = data.summary;
-        if (data.materiel) document.getElementById('detail-materiel').value = data.materiel;
+            // 2. Charger les étapes
+            if (data.steps) {
+                data.steps.forEach(step => ajouterEtape(step.title, step.desc, step.imgs || []));
+            }
 
-        // Étapes
-        if (data.steps) {
-            data.steps.forEach(step => ajouterEtape(step.title, step.desc, step.imgs || []));
+            // 3. Section Technique
+            if (data.tech) afficherSectionTech(data.tech);
+
+            // 4. Charger les codes
+            if (data.codes) {
+                data.codes.forEach(c => ajouterBlocCode(c.fileName, c.extension, c.content));
+            }
         }
-
-        // Section Technique
-        if (data.tech) afficherSectionTech(data.tech);
-
-        // Codes
-        if (data.codes) {
-            data.codes.forEach(c => ajouterBlocCode(c.fileName, c.extension, c.content));
-        }
+    } catch (error) {
+        console.error("Erreur de chargement Firebase :", error);
     }
 }
 
@@ -152,7 +125,7 @@ function ajouterEtape(title = "", desc = "", imgUrls = []) {
                 <label>Images :</label>
                 <input type="file" class="step-img-file" accept="image/*" multiple> 
                 <input type="hidden" class="step-img-existante" value='${JSON.stringify(imgUrls)}'>
-                ${imgUrls.length > 0 ? `<p style="color:green; font-size:0.8em;"><i class="fas fa-check"></i> ${imgUrls.length} image(s) sauvegardée(s)</p>` : ""}
+                ${imgUrls.length > 0 ? `<p style="color:green; font-size:0.8em;"><i class="fas fa-check"></i> ${imgUrls.length} image(s) enregistrée(s)</p>` : ""}
             </div>
         </section>`;
 
@@ -163,11 +136,17 @@ function ajouterEtape(title = "", desc = "", imgUrls = []) {
     quillStepsEditors[id] = quill;
 }
 
-window.supprimerEtape = function(id) {
-    if(confirm("Supprimer cette étape ?")) {
+// Global functions for buttons
+window.supprimerEtape = (id) => {
+    if(confirm("Supprimer ?")) {
         document.getElementById(`step-${id}`).remove();
         delete quillStepsEditors[id];
     }
+};
+
+window.supprimerSection = (sid, wid) => {
+    document.getElementById(sid).remove();
+    document.getElementById(wid).style.display = 'block';
 };
 
 function ajouterBlocCode(fileName = "", extension = ".python", content = "") {
@@ -208,13 +187,8 @@ function afficherSectionTech(data = {title: "", formula: "", result: ""}) {
     document.getElementById('tech-btn-wrapper').style.display = 'none';
 }
 
-window.supprimerSection = function(sid, wid) {
-    document.getElementById(sid).remove();
-    document.getElementById(wid).style.display = 'block';
-};
-
 /**
- * SAUVEGARDE
+ * SAUVEGARDE SUR FIREBASE
  */
 const toBase64 = file => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -225,6 +199,10 @@ const toBase64 = file => new Promise((resolve, reject) => {
 
 document.getElementById('details-project-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = "Envoi...";
+
     try {
         const stepsData = [];
         for (let step of document.querySelectorAll('.dynamic-step')) {
@@ -237,7 +215,6 @@ document.getElementById('details-project-form').addEventListener('submit', async
                 imgs = []; 
                 for (let f of fileIn.files) imgs.push(await toBase64(f));
             }
-
             stepsData.push({
                 title: step.querySelector('.step-title').value,
                 desc: quillStepsEditors[id].root.innerHTML,
@@ -253,6 +230,7 @@ document.getElementById('details-project-form').addEventListener('submit', async
 
         const techEl = document.getElementById('section-tech');
         const finalDetails = {
+            projetId: projetId,
             summary: quillSummary.root.innerHTML,
             coverImage: hiddenCoverInput.value,
             materiel: document.getElementById('detail-materiel').value,
@@ -263,21 +241,26 @@ document.getElementById('details-project-form').addEventListener('submit', async
                 formula: document.getElementById('tech-formula').value,
                 result: document.getElementById('tech-result').value
             } : null,
-            lastUpdate: new Date().toLocaleDateString()
+            lastUpdate: new Date().toISOString()
         };
 
-        localStorage.setItem(`details_projet_${projetId}`, JSON.stringify(finalDetails));
-        alert("Enregistré !");
-    window.location.href = `../../pages/project-detail/display.html?id=${projetId}`;
+        // Envoi Cloud
+        await setDoc(doc(db, "details_projets", projetId), finalDetails);
+        alert("🚀 Synchronisé sur le Cloud !");
+        window.location.href = `../../pages/project-detail/display.html?id=${projetId}`;
+
     } catch (err) {
         console.error(err);
-        alert("Erreur");
+        alert("Erreur de synchro");
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "Valider les détails";
     }
 });
 
-// Events init
+// Init events
 document.getElementById('add-step-btn').addEventListener('click', () => ajouterEtape());
 document.getElementById('add-tech-btn').addEventListener('click', () => afficherSectionTech());
 document.getElementById('add-code-btn').addEventListener('click', () => ajouterBlocCode());
 
-window.addEventListener('load', chargerDonneesExistantes);
+window.addEventListener('load', chargerDonneesFirebase);
