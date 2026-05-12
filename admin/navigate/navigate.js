@@ -2,41 +2,35 @@ function chargerMaNavigation() {
     const cible = document.querySelector('header');
     if (!cible) return;
 
+    // Récupère le nom du dossier racine (ex: /portfolio-youcef/)
     const pathArray = window.location.pathname.split('/');
     const repoName = pathArray[1]; 
-    const baseRoot = `/${repoName}`; // /portfolio-youcef
 
-    const cheminGitHub = `${baseRoot}/admin/navigate/navigate.html`;
+    // On construit le chemin absolu pour GitHub Pages
+    // Cela permet d'accéder au fichier peu importe la profondeur du dossier actuel
+    const cheminGitHub = `/${repoName}/admin/navigate/navigate.html`;
+    const cheminLocal = '/admin/navigate/navigate.html';
 
     fetch(cheminGitHub)
+        .then(response => {
+            if (!response.ok) return fetch(cheminLocal); // Test local si GitHub échoue
+            return response;
+        })
         .then(response => {
             if (!response.ok) throw new Error("Navigate.html introuvable");
             return response.text();
         })
         .then(html => {
             cible.innerHTML = html;
-
-            const liens = cible.querySelectorAll('a');
-            liens.forEach(lien => {
-                let href = lien.getAttribute('href');
-                
-                if (href && href !== "#" && !href.startsWith('http')) {
-                    
-                    if (href.startsWith('ROOT:')) {
-                        // CAS 1 : Lien vers le site public (ex: ROOT:index.html)
-                        // On enlève "ROOT:" et on pointe vers la racine du repo
-                        const cleanHref = href.replace('ROOT:', '');
-                        lien.href = `${baseRoot}/${cleanHref}`;
-                    } else {
-                        // CAS 2 : Lien interne à l'administration
-                        // On pointe vers /portfolio-youcef/admin/le-lien
-                        lien.href = `${baseRoot}/admin/${href}`;
-                    }
-                }
-            });
-            console.log("Navigation et liens (Public/Admin) corrigés !");
+            console.log("Navigation GitHub Pages chargée !");
         })
-        .catch(err => console.error("Erreur :", err));
+        .catch(err => {
+            console.warn("Tentative avec chemin relatif suite à l'échec du chemin absolu...");
+            // Dernier recours : chemin relatif basé sur image_8fc71c.png
+            fetch('../navigate/navigate.html')
+                .then(res => res.text())
+                .then(html => { cible.innerHTML = html; });
+        });
 }
 
 document.addEventListener("DOMContentLoaded", chargerMaNavigation);
