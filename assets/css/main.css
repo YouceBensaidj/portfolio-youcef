@@ -236,3 +236,74 @@ footer {
         margin: 0 auto;
     }
 }
+
+
+
+/*mis à jours css pour footer */
+
+/* Style de base des icônes de réseaux sociaux */
+.footer-icon {
+    font-size: 26px; /* Taille idéale pour la visibilité */
+    color: #eef6f7;  /* À remplacer par votre code couleur bleu/cyan si différent */
+    transition: transform 0.3s ease, color 0.3s ease, filter 0.3s ease;
+}
+
+/* Effet dynamique au survol (Hover) */
+.footer-icon:hover {
+    transform: translateY(-3px) scale(1.15); /* Légère élévation + agrandissement */
+    color: #123ede; /* L'icône s'illumine en blanc pur */
+    filter: drop-shadow(0 0 8px rgba(0, 188, 212, 0.6)); /* Petit effet de halo lumineux */
+}
+
+.location {
+    font-size: 0.95rem;
+    opacity: 0.8;
+}
+
+/* --- BOUTONS DU PROFIL --- */
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap; /* S'adapte bien sur les téléphones */
+}
+
+.btn-primary, .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Bouton principal (Télécharger le CV) - Style Bleu/Cyan */
+.btn-primary {
+    background-color: #00bcd4;
+    color: #ffffff;
+    border: 2px solid #00bcd4;
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    color: #00bcd4;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4);
+}
+
+/* Bouton secondaire (Me contacter) - Style Épuré */
+.btn-secondary {
+    background-color: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #ffffff;
+    color: #1a1a1a; /* Couleur sombre de fond (à ajuster selon votre site) */
+    transform: translateY(-2px);
+}
