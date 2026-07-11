@@ -1,5 +1,12 @@
-// 1. IMPORTATIONS FIREBASE
-import { db } from './project-form/firebase-config.js';
+// =================================================================
+// 1. IMPORTATIONS FIREBASE (AUTH & FIRESTORE MODULAIRE)
+// =================================================================
+import { db, auth } from './project-form/firebase-config.js';
+import { 
+    signInWithEmailAndPassword, 
+    onAuthStateChanged,
+    signOut 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
     collection, 
     getDocs, 
@@ -10,11 +17,89 @@ import {
     getDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// --- 2. FONCTIONS DE NAVIGATION (Définies AVANT l'affichage) ---
+// Récupération des éléments HTML du DOM
+const loginSection = document.getElementById('login-section');
+const adminPanel = document.getElementById('admin-panel');
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
 
+
+// =================================================================
+// 2. SÉCURITÉ : SURVEILLANCE DE L'ÉTAT DE CONNEXION (ATTEND LE MENU)
+// =================================================================
+document.addEventListener("navigationChargee", () => {
+
+    onAuthStateChanged(auth, (user) => {
+        const logoutBtn = document.getElementById('btn-logout');
+        const header = document.querySelector('header'); // Recupère le header qui contient le navbar
+
+        if (user) {
+            // ➕ AFFICHER LA NAVBAR ENTIÈRE
+            if (header) header.style.display = 'block'; 
+
+            // Utilisateur connecté -> Masquer la boîte de connexion et révéler le panel
+            if (loginSection) loginSection.classList.add('hidden');
+            if (adminPanel) {
+                adminPanel.classList.remove('hidden');
+                adminPanel.style.display = ''; 
+            }
+            
+            // Afficher le bouton de déconnexion dans la barre de navigation
+            if (logoutBtn) {
+                logoutBtn.classList.remove('hidden');
+                logoutBtn.removeEventListener('click', gererDeconnexion);
+                logoutBtn.addEventListener('click', gererDeconnexion);
+            }
+            
+            afficherListeProjetsAdmin();
+            initialiserFormulaireProjet();
+        } else {
+            // ➖ MASQUER LA NAVBAR ENTIÈRE SI DÉCONNECTÉ
+            if (header) header.style.display = 'none';
+
+            // Utilisateur déconnecté -> Verrouiller l'accès et afficher la connexion
+            if (loginSection) loginSection.classList.remove('hidden'); 
+            if (adminPanel) {
+                adminPanel.classList.add('hidden');
+            }
+            if (logoutBtn) logoutBtn.classList.add('hidden');
+        }
+    });
+
+});
+
+// Traitement du formulaire de connexion
+if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        
+        if (loginError) loginError.textContent = ""; 
+
+        signInWithEmailAndPassword(auth, email, password)
+            .catch((error) => {
+                if (loginError) loginError.textContent = "Accès refusé. Identifiants incorrects.";
+                console.error("Erreur Auth:", error.message);
+            });
+    });
+}
+
+// Fonction globale pour gérer la déconnexion
+function gererDeconnexion() {
+    signOut(auth)
+        .then(() => {
+            alert("Vous avez été déconnecté !");
+            window.location.search = ""; // Purge les paramètres d'URL (?edit=...)
+        })
+        .catch((err) => console.error("Erreur déconnexion:", err));
+}
+
+// =================================================================
+// 3. FONCTIONS DE NAVIGATION GLOBALISÉES (POUR LES BOUTONS HTML)
+// =================================================================
 window.allerAuFormulaireDetails = function(id) {
     console.log("Redirection vers détails pour l'ID:", id);
-    // On sort de 'projects' pour aller dans 'project-form'
     window.location.href = "../project-form/details_form.html?id=" + id;
 };
 
@@ -23,7 +108,7 @@ window.supprimerProjet = async (id) => {
         try {
             await deleteDoc(doc(db, "details_projets", id));
             alert("Projet supprimé !");
-            afficherListeProjetsAdmin(); // Rafraîchir la liste
+            afficherListeProjetsAdmin(); // Rafraîchissement direct de la liste
         } catch (e) {
             console.error("Erreur suppression:", e);
             alert("Erreur lors de la suppression.");
@@ -31,19 +116,21 @@ window.supprimerProjet = async (id) => {
     }
 };
 
-// --- 3. AFFICHAGE DE LA LISTE ---
+// =================================================================
+// 4. AFFICHAGE DE LA LISTE DES PROJETS (RUBRIQUE BLANCHE À DROITE)
+// =================================================================
 async function afficherListeProjetsAdmin() {
     const listContainer = document.getElementById('admin-projects-list');
     if (!listContainer) return; 
     
-    listContainer.innerHTML = '<p style="text-align:center;">Chargement des projets...</p>'; 
+    listContainer.innerHTML = '<p style="text-align:center; color: #00bcd4;">Chargement des projets...</p>'; 
 
     try {
         const querySnapshot = await getDocs(collection(db, "details_projets"));
         listContainer.innerHTML = ''; 
 
         if (querySnapshot.empty) {
-            listContainer.innerHTML = '<p>Aucun projet trouvé.</p>';
+            listContainer.innerHTML = '<p style="text-align: center;">Aucun projet trouvé.</p>';
             return;
         }
 
@@ -52,38 +139,40 @@ async function afficherListeProjetsAdmin() {
             const id = projetDoc.id;
 
             listContainer.innerHTML += `
-                <div class="admin-list-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; background: white;">
-                    <div class="project-info" style="display:flex; align-items:center; gap:15px;">
-                        <img src="${projet.coverImage || ''}" style="width:100px; height:70px; object-fit:cover; border-radius: 4px;" alt="Projet">
-                        <div>
-                            <h3 style="margin:0">${projet.title || "Sans titre"}</h3>
-                            <p style="margin:5px 0; font-size: 0.9em; color: #666;">${projet.summary || "Pas de description"}</p>
+                <div class="admin-list-item">
+                    <div class="project-info" style="display:flex; align-items:center; gap:15px; max-width: 65%;">
+                        <img src="${projet.coverImage || ''}" style="width:90px; height:65px; object-fit:cover; border-radius: 4px; border: 1px solid #ddd; flex-shrink: 0;" alt="Projet">
+                        <div style="overflow: hidden; text-overflow: ellipsis;">
+                            <h3 style="margin:0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${projet.title || "Sans titre"}</h3>
+                            <p style="margin:5px 0; font-size: 0.85em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${projet.summary || "Pas de description"}</p>
                         </div>
                     </div>
-                    <div class="admin-actions" style="display: flex; gap: 10px;">
-                        <!-- Bouton Détails : Envoie vers l'ajout de détails techniques -->
-                        <button type="button" class="btn-details" onclick="window.allerAuFormulaireDetails('${id}')" style="background: #4361ee; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">DÉTAILS</button>
-                        
-                        <!-- Lien Modifier : Retourne à l'index (formulaire principal) -->
-                        <a href="../index.html?edit=${id}" class="btn-modifier" style="background: #f72585; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 13px;">MODIFIER</a>
-                        
-                        <button type="button" onclick="window.supprimerProjet('${id}')" style="background: #e63946; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 4px;">SUPPRIMER</button>
+                    <div class="admin-actions">
+                        <button type="button" onclick="window.allerAuFormulaireDetails('${id}')">DÉTAILS</button>
+                        <a href="index.html?edit=${id}">MODIFIER</a>
+                        <button type="button" onclick="window.supprimerProjet('${id}')">SUPPRIMER</button>
                     </div>
                 </div>`;
         });
     } catch (e) {
         console.error("Erreur Firebase liste:", e);
-        listContainer.innerHTML = '<p>Erreur de chargement. Vérifiez la console.</p>';
+        listContainer.innerHTML = '<p style="color: red;">Erreur de chargement. Vérifiez la console.</p>';
     }
 }
 
-// --- 4. GESTION DU FORMULAIRE (AJOUT / MODIF) ---
-const form = document.getElementById('add-project-form');
-if (form) {
+// =================================================================
+// 5. GESTION DU FORMULAIRE (AJOUT / MODIFICATION)
+// =================================================================
+function initialiserFormulaireProjet() {
+    const form = document.getElementById('add-project-form');
+    if (!form || form.dataset.initialized === "true") return; 
+    
+    form.dataset.initialized = "true";
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit');
     const submitBtn = form.querySelector('button[type="submit"]');
 
+    // Mode édition : Remplissage automatique des champs à gauche
     if (editId) {
         submitBtn.textContent = "METTRE À JOUR LE PROJET";
         const docRef = doc(db, "details_projets", editId);
@@ -121,13 +210,12 @@ if (form) {
         try {
             if (editId) {
                 await updateDoc(doc(db, "details_projets", editId), data);
-                alert("Projet mis à jour !");
+                alert("Projet mis à jour avec succès !");
             } else {
                 await addDoc(collection(db, "details_projets"), { ...data, createdAt: new Date() });
-                alert("Projet ajouté !");
+                alert("Projet ajouté avec succès !");
             }
-            // Redirection vers la liste
-            window.location.href = "projects/liste_des_projets.html";
+            window.location.href = "index.html";
         } catch (err) {
             alert("Erreur lors de l'enregistrement !");
             console.error(err);
@@ -136,6 +224,3 @@ if (form) {
         }
     });
 }
-
-// INITIALISATION
-document.addEventListener('DOMContentLoaded', afficherListeProjetsAdmin);

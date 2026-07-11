@@ -1,7 +1,10 @@
-// On utilise les liens complets (CDN) car ton navigateur ne connaît pas "firebase/app" tout seul
+// 1. IMPORTATIONS DES SERVICES DE BASE DE FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// ➕ AJOUT : On importe le module d'authentification Firebase via CDN
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+// 2. VOS CLÉS DE CONFIGURATION INITIALES
 const firebaseConfig = {
   apiKey: "AIzaSyDw95fNMUjwUKIqpwsaNQsGsxI5uGjYMVo",
   authDomain: "portfolio-youcef.firebaseapp.com",
@@ -12,6 +15,14 @@ const firebaseConfig = {
   measurementId: "G-80ZLGQMN00"
 };
 
+// 3. INITIALISATION DE L'APPLICATION FIREBASE
 const app = initializeApp(firebaseConfig);
-// On exporte "db" pour que ton fichier details.js puisse s'en servir
-export const db = getFirestore(app);
+
+// 4. INITIALISATION DES SERVICES (FIRESTORE ET AUTH)
+const db = getFirestore(app);
+// ➕ AJOUT : Initialisation de l'outil d'authentification pour votre projet
+const auth = getAuth(app);
+
+// 5. EXPORTATION DES SERVICES
+// 🔄 MODIFICATION : On exporte "db" (pour vos projets) ET "auth" (pour la page de connexion)
+export { db, auth };

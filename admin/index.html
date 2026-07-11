@@ -3,49 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin - Gestion des Projets - Youcef BENSAIDJ</title>
+    <!-- Vos fichiers CSS d'origine -->
     <link rel="stylesheet" href="admin.css"> 
     <link rel="stylesheet" href="navigate/navigate.css">
 </head>
 <body>
    
+    <!-- Votre barre de navigation (Gérée dynamiquement par navigate.js) -->
     <header></header> 
 
-    <main class="admin-container">
+    <!-- =================================================================
+       1. FORMULAIRE DE CONNEXION (S'affiche en premier si déconnecté)
+       ================================================================= -->
+    <div id="login-section" class="login-box">
+        <h2>Espace Administration</h2>
+        <p>Connexion réservée à Youcef</p>
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Mot de passe" required>
+            <button type="submit">SE CONNECTER</button>
+        </form>
+        <div id="login-error" style="color: #ff3b3b; margin-top: 10px; font-weight: bold;"></div>
+    </div>
+
+    <!-- =================================================================
+       2. PANNEAU ADMIN (Masqué par défaut avec la classe .hidden)
+       ================================================================= -->
+    <main id="admin-panel" class="admin-container hidden">
+
         <h1 class="admin-title">Espace Administration (Youcef)</h1>
 
-        <section class="admin-section">
-            <h2>Ajouter un Nouveau Projet</h2>
-            <!-- L'ID du formulaire est correct pour le JS -->
-            <form id="add-project-form" class="admin-form">
-                <div class="form-group">
-                    <label for="project-title">Titre du Projet :</label>
-                    <input type="text" id="project-title" name="title" placeholder="Ex: Robot Autonome" required>
-                </div>
+        <!-- Structure en grille ou flex pour aligner le formulaire et la liste des projets -->
+        <div style="display: flex; gap: 30px; align-items: start;">
 
-                <div class="form-group">
-                    <label for="project-desc">Description Courte :</label>
-                    <textarea id="project-desc" name="description" placeholder="Ex: Robot compact avec évitement d'obstacles..." required></textarea>
-                </div>
+            <!-- Formulaire d'ajout (Votre structure exacte) -->
+            <section class="admin-section" style="flex: 1;">
+                <h2>Ajouter un Nouveau Projet</h2>
+                <form id="add-project-form" class="admin-form">
+                    <div class="form-group">
+                        <label for="project-title">Titre du Projet :</label>
+                        <input type="text" id="project-title" name="title" placeholder="Ex: Robot Autonome" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="project-skills">Compétences (séparées par des virgules) :</label>
-                    <input type="text" id="project-skills" name="skills" placeholder="Ex: C++, Arduino, Lidar" required>
-                </div>
+                    <div class="form-group">
+                        <label for="project-desc">Description Courte :</label>
+                        <textarea id="project-desc" name="description" placeholder="Ex: Robot compact avec évitement d'obstacles..." required></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label for="project-image">Image du Projet :</label>
-                    <input type="file" id="project-image" name="image" accept="image/*">
-                    <p class="help-text">L'image sera stockée sur Firebase</p>
-                </div>
-                <button type="submit" class="btn-admin">AJOUTER LE PROJET</button>
-            </form>
-        </section>
+                    <div class="form-group">
+                        <label for="project-skills">Compétences (séparées par des virgules) :</label>
+                        <input type="text" id="project-skills" name="skills" placeholder="Ex: C++, Arduino, Lidar" required>
+                    </div>
 
-   
-    </main>
+                    <div class="form-group">
+                        <label for="project-image">Image du Projet :</label>
+                        <input type="file" id="project-image" name="image" accept="image/*">
+                        <p class="help-text">L'image sera stockée sur Firebase</p>
+                    </div>
+                    <button type="submit" class="btn-admin">AJOUTER LE PROJET</button>
+                </form>
+            </section>
 
-    <!-- UN SEUL APPEL pour admin.js avec type="module" -->
-     <script type="module" src="admin.js"></script>
+            <!-- 🔄 AJOUT / CORRECTION : Section droite pour lister les projets en ligne -->
+
+
+        </div>
+    </main> <!-- La balise est maintenant correctement placée ici -->
+
+    <!-- Vos scripts (Chargés en type="module" pour que Firebase fonctionne) -->
+    <script type="module" src="admin.js"></script>
     <script src="navigate/navigate.js"></script>
 </body>
 </html>

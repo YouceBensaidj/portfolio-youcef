@@ -7,7 +7,6 @@ function chargerMaNavigation() {
     const repoName = pathArray[1]; 
 
     // On construit le chemin absolu pour GitHub Pages
-    // Cela permet d'accéder au fichier peu importe la profondeur du dossier actuel
     const cheminGitHub = `/${repoName}/admin/navigate/navigate.html`;
     const cheminLocal = '/admin/navigate/navigate.html';
 
@@ -23,13 +22,20 @@ function chargerMaNavigation() {
         .then(html => {
             cible.innerHTML = html;
             console.log("Navigation GitHub Pages chargée !");
+            
+            // ➕ AJOUT : On prévient admin.js que la barre de navigation est enfin prête dans le DOM
+            document.dispatchEvent(new Event("navigationChargee"));
         })
         .catch(err => {
             console.warn("Tentative avec chemin relatif suite à l'échec du chemin absolu...");
-            // Dernier recours : chemin relatif basé sur image_8fc71c.png
+            // Dernier recours : chemin relatif basé sur l'arborescence
             fetch('../navigate/navigate.html')
                 .then(res => res.text())
-                .then(html => { cible.innerHTML = html; });
+                .then(html => { 
+                    cible.innerHTML = html; 
+                    // ➕ AJOUT : Ici aussi au cas où
+                    document.dispatchEvent(new Event("navigationChargee"));
+                });
         });
 }
 

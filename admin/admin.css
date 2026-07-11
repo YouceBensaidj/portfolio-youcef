@@ -1,4 +1,6 @@
-/* 1. VARIABLES GLOBALES */
+/* =================================================================
+   1. VARIABLES GLOBALES (VOTRE STYLE DE DÉBUT)
+   ================================================================= */
 :root {
     --primary-blue: #00bcd4;  /* Bleu ciel (accents et ajout) */
     --primary-green: #4CAF50; /* Vert (modifier) */
@@ -7,15 +9,18 @@
     --bg-white: #ffffff;
     --border-color: #ddd;
     --bg-light: #f9f9f9;
-    --primary-gray: #607d8b; /* Une couleur gris-bleu pro par exemple */
+    --primary-gray: #607d8b; 
 }
 
-/* 2. MISE EN PAGE GÉNÉRALE */
+/* =================================================================
+   2. MISE EN PAGE GÉNÉRALE (ARRIÈRE-PLAN BLANC CLASSIQUE)
+   ================================================================= */
 .admin-container {
     background-color: var(--bg-white);
     padding: 40px 20px;
     max-width: 1000px;
     margin: 0 auto;
+    font-family: Arial, sans-serif;
 }
 
 .admin-title {
@@ -33,7 +38,42 @@
     margin-bottom: 30px;
 }
 
-/* 3. STYLE DU FORMULAIRE D'AJOUT */
+/* Barre de statut reconvertie au style clair */
+.admin-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-light);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.admin-status-bar p {
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+#btn-logout {
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+#btn-logout:hover {
+    opacity: 0.85;
+}
+
+/* =================================================================
+   3. STYLE DU FORMULAIRE D'AJOUT
+   ================================================================= */
 .admin-form .form-group {
     margin-bottom: 15px;
     text-align: left;
@@ -43,6 +83,7 @@
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
+    color: var(--text-dark);
 }
 
 .admin-form input,
@@ -51,7 +92,7 @@
     padding: 12px;
     border: 1px solid var(--border-color);
     border-radius: 5px;
-    box-sizing: border-box; /* Assure que le padding ne dépasse pas */
+    box-sizing: border-box; 
 }
 
 .admin-form textarea {
@@ -82,15 +123,17 @@
     background-color: #008ba3;
 }
 
-/* 4. LISTE DES PROJETS EXISTANTS */
+/* =================================================================
+   4. LISTE DES PROJETS EXISTANTS (STYLE BLANC INITIAL)
+   ================================================================= */
 .admin-list-item {
-    background: white;
+    background: white; /* Retour au fond blanc d'origine */
     border: 1px solid var(--border-color);
     border-radius: 5px;
     padding: 15px;
     margin-bottom: 10px;
     display: flex;
-    justify-content: space-between; /* Infos à gauche, actions à droite */
+    justify-content: space-between; 
     align-items: center;
     transition: box-shadow 0.3s;
 }
@@ -99,56 +142,358 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.admin-list-item h3 {
+.project-info h3 {
     margin: 0;
     font-size: 1.1rem;
     color: var(--text-dark);
 }
 
-.admin-list-item p {
+.project-info p {
     margin: 5px 0 0 0;
     font-size: 0.9rem;
     color: #666;
 }
 
-/* 5. BOUTONS D'ACTION (MODIFIER / SUPPRIMER) */
-/* Conteneur pour empiler les boutons à droite */
-/* Le conteneur qui contient les deux boutons */
+/* =================================================================
+   5. BOUTONS D'ACTION (MODIFIER / SUPPRIMER / DÉTAILS)
+   ================================================================= */
 .admin-actions {
     display: flex;
-    flex-direction: column; /* C'est cette ligne qui force l'empilement vertical */
-    gap: 10px;               /* L'espacement entre le bouton vert et le bouton rouge */
-    justify-content: center; /* Centre les boutons verticalement par rapport au texte */
+    flex-direction: column; /* Empilement vertical comme au début */
+    gap: 10px;              
+    justify-content: center; 
 }
 
-/* On s'assure que les boutons ont la même largeur et ne sont pas trop géants */
-.btn-edit, .btn-delete .btn-details {
-    width: 120px;            /* Tu peux ajuster cette largeur selon tes goûts */
-    padding: 8px 0;          /* Espace interne pour que le bouton soit beau */
+.admin-actions button, 
+.admin-actions a {
+    width: 120px;            
+    padding: 8px 0;          
     text-align: center;
     border-radius: 5px;
     border: none;
     color: white;
     font-weight: bold;
     cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-block;
 }
 
-.btn-edit {
-    background-color: var(--primary-green);
+/* Vos couleurs de boutons initiales */
+.admin-actions button:nth-of-type(1) { 
+    background-color: var(--primary-blue); /* Bouton DETAILS */
 }
 
-.btn-delete {
-    background-color: var(--primary-red);
+.admin-actions a { 
+    background-color: var(--primary-green); /* Bouton MODIFIER */
 }
 
-.btn-details{ 
-     background-color: var(--primary-blue);
+.admin-actions button:nth-of-type(2) { 
+    background-color: var(--primary-red); /* Bouton SUPPRIMER */
 }
 
-.btn-edit:hover, .btn-delete:hover , .btn-details:hover {
+.admin-actions button:hover, 
+.admin-actions a:hover {
     opacity: 0.85;
 }
 
-.btn-edit:active, .btn-delete:active , .btn-details:active {
-    transform: scale(0.95); /* Petit effet d'enfoncement au clic */
+.admin-actions button:active, 
+.admin-actions a:active {
+    transform: scale(0.95); 
+}
+
+/* =================================================================
+   6. SÉCURITÉ & MASQUAGE DE LA CONNEXION
+   ================================================================= */
+.hidden {
+    display: none !important;
+}
+
+.login-box {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: #1a1a1a; /* La boîte de connexion reste sombre et isolée */
+    border-radius: 8px;
+    border: 1px solid #00bcd4;
+    text-align: center;
+    color: white;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #333;
+    background: #2b2b2b;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: #00bcd4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.login-box button:hover {
+    background: #008ba3;
+}
+
+/* =================================================================
+   1. VARIABLES GLOBALES (VOTRE STYLE DE DÉBUT)
+   ================================================================= */
+:root {
+    --primary-blue: #00bcd4;  /* Bleu ciel (accents et ajout) */
+    --primary-green: #4CAF50; /* Vert (modifier) */
+    --primary-red: #ff3b3b;   /* Rouge (supprimer) */
+    --text-dark: #333;
+    --bg-white: #ffffff;
+    --border-color: #ddd;
+    --bg-light: #f9f9f9;
+    --primary-gray: #607d8b; 
+}
+
+/* =================================================================
+   2. MISE EN PAGE GÉNÉRALE (ARRIÈRE-PLAN BLANC CLASSIQUE)
+   ================================================================= */
+.admin-container {
+    background-color: var(--bg-white);
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.admin-title {
+    color: var(--primary-blue);
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-section {
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+/* Barre de statut reconvertie au style clair */
+.admin-status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-light);
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.admin-status-bar p {
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+#btn-logout {
+    background: var(--primary-red);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.3s;
+}
+
+#btn-logout:hover {
+    opacity: 0.85;
+}
+
+/* =================================================================
+   3. STYLE DU FORMULAIRE D'AJOUT
+   ================================================================= */
+.admin-form .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.admin-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--text-dark);
+}
+
+.admin-form input,
+.admin-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    box-sizing: border-box; 
+}
+
+.admin-form textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.help-text {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.btn-admin {
+    display: inline-block;
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-admin:hover {
+    background-color: #008ba3;
+}
+
+/* =================================================================
+   4. LISTE DES PROJETS EXISTANTS (STYLE BLANC INITIAL)
+   ================================================================= */
+.admin-list-item {
+    background: white; /* Retour au fond blanc d'origine */
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    transition: box-shadow 0.3s;
+}
+
+.admin-list-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.project-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+
+.project-info p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* =================================================================
+   5. BOUTONS D'ACTION (MODIFIER / SUPPRIMER / DÉTAILS)
+   ================================================================= */
+.admin-actions {
+    display: flex;
+    flex-direction: column; /* Empilement vertical comme au début */
+    gap: 10px;              
+    justify-content: center; 
+}
+
+.admin-actions button, 
+.admin-actions a {
+    width: 120px;            
+    padding: 8px 0;          
+    text-align: center;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-block;
+}
+
+/* Vos couleurs de boutons initiales */
+.admin-actions button:nth-of-type(1) { 
+    background-color: var(--primary-blue); /* Bouton DETAILS */
+}
+
+.admin-actions a { 
+    background-color: var(--primary-green); /* Bouton MODIFIER */
+}
+
+.admin-actions button:nth-of-type(2) { 
+    background-color: var(--primary-red); /* Bouton SUPPRIMER */
+}
+
+.admin-actions button:hover, 
+.admin-actions a:hover {
+    opacity: 0.85;
+}
+
+.admin-actions button:active, 
+.admin-actions a:active {
+    transform: scale(0.95); 
+}
+
+/* =================================================================
+   6. SÉCURITÉ & MASQUAGE DE LA CONNEXION
+   ================================================================= */
+.hidden {
+    display: none !important;
+}
+
+.login-box {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background: #1a1a1a; /* La boîte de connexion reste sombre et isolée */
+    border-radius: 8px;
+    border: 1px solid #00bcd4;
+    text-align: center;
+    color: white;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #333;
+    background: #2b2b2b;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: #00bcd4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.login-box button:hover {
+    background: #008ba3;
 }
